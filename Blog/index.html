@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+	<title>My personal Blog | Chetan Kar</title>
+	<style type="text/css">
+		textarea{
+			width: 50%;
+		}
+		input[type=text]{
+			width: 50%;
+			height: 30px;
+		}
+
+
+		#submit_btn{
+			background-color: green;
+			width: 50%;
+			height: 40px;
+			color: white;
+		}
+		body #main{
+			margin-bottom: 5%;
+			margin-left: 5%;
+			margin-right: 5%;
+			background-color: lightgrey;
+		}
+		body{
+			background-color: maroon;
+		}
+	</style>
+</head>
+<body><br><br><br>
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link" href="/">Home</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/allStories">See blog posts</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/editStories">Edit your stories</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/statistics">Statistics</a>
+    </li>
+  </ul>
+</nav>
+<div align="center" id="main">
+	<h3>Your Story:</h3>
+	<input type="text" id="title" placeholder="Title"><br>
+	<input type="text" id="image" placeholder="Image Link"><br><br>
+
+	<textarea cols="100" rows="25" id="story" placeholder="Here goes your story..."></textarea><br>
+
+	<input type="submit" id="submit_btn" value="Submit Your story">
+</div>
+
+<script type="text/javascript">
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+</script>
+<script type="text/javascript">
+  var submit = document.getElementById('submit_btn')
+    submit.onclick = function () {
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200 || this.status == 304){
+              console.log('Should Redirect!')
+              //window.location.replace('/allStories')
+    		} else {
+              //submit.value = "Some error!"
+              //alert('Some error')
+              submit.value = "Some error occured!"
+            }
+        }
+        var title = document.getElementById('title').value;
+        var image = document.getElementById('image').value;
+        var story = document.getElementById('story').value;
+        request.open('POST', '/stories', true);
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.send(JSON.stringify({title:title,image:image,story:story}));
+        submit.value = "Submitting..."
+        sleep(3000)
+        window.location.replace('/allStories')
+    }
+</script>
+
+</body>
+</html>

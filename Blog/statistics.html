@@ -1,0 +1,137 @@
+ <!DOCTYPE html>
+<html>
+<head>
+	<title>Blog Stats | Chetan Kar</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+ 	 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+ 	 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+  <style type="text/css">
+    body #info{
+      margin-top: 5%;
+    }
+  </style>
+
+</head>
+<body>
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link" href="/">Home</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/allStories">See blog posts</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/editStories">Edit your stories</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#Statistics">Statistics</a>
+    </li>
+  </ul>
+</nav>
+<br><br><br>
+<div class="row" align="center">
+  <div class="col-md-6" id="app"><canvas id="myChart" style="width: 100%;height: 450px;"></canvas></div>
+  <div class="col-md-6" id="info"><p>Pageviews of all time history : <span id="pageviews"></span></p><hr>
+  <p>Pageviews today: <span id="today"></span></p><hr>
+  <p>Pageviews yesterday: <span id="yesterday"></span></p><hr>
+  <p>Pageviews Day before Yesterday: <span id="BeforeYesterday"></span></p><hr>
+  </div>
+</div><br><br>
+<hr>
+
+<script>
+var ctx = document.getElementById('myChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ["Day before yesterday", "Yesterday" , "Today"],
+        datasets: [{
+            label: 'Pageviews Statistics',
+            data: [0, 0 ,0],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)',
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+</script>
+<script type="text/javascript">
+  //Write a backend script with time, send it here using an HTTP request in a timer (dynamic pages), and post it as labels, updating every 1 minute.
+</script>
+<script type="text/javascript">
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       // Typical action to be performed when the document is ready:
+       var data = JSON.parse(this.responseText);
+       document.getElementById("pageviews").innerHTML = data[0].pageviews;
+    }
+};
+xhttp.open("GET", "/totalViews", true);
+xhttp.send();
+</script>
+<script type="text/javascript">
+function myTimer(){
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       var data = JSON.parse(this.responseText);
+       var today = new Date();
+       var y = today.getFullYear();
+       var m = today.getMonth() + 1;
+       var d = today.getDate();
+       console.log(m)
+
+       var todaySum = 0;
+       var yesterdaySum = 0;
+       var beforeYesterdaySum = 0;
+       for(var i = 0; i < data.length;i++){
+        if(data[i].date == (y.toString() + '-' + m.toString() + '-' + d.toString())){
+          todaySum += data[i].hit
+        } else if (data[i].date == (y.toString() + '-' + m.toString() + '-' + (d-1).toString())){
+          yesterdaySum += data[i].hit
+        } else if (data[i].date == (y.toString() + '-' + m.toString() + '-' + (d-2).toString())){
+          beforeYesterdaySum += data[i].hit
+        } else {
+          //do nothing
+        }
+       }
+       document.getElementById('today').innerHTML = todaySum;
+       document.getElementById('yesterday').innerHTML = yesterdaySum;
+       document.getElementById('BeforeYesterday').innerHTML = beforeYesterdaySum;
+
+      myChart.data.datasets[0].data[0] = beforeYesterdaySum
+      myChart.data.datasets[0].data[1] = yesterdaySum
+      myChart.data.datasets[0].data[2] = todaySum
+      myChart.update()
+    }
+  };
+  xhttp.open("GET", "/hits?t=" +Math.random(), true);
+  xhttp.send();
+}
+</script>
+<script type="text/javascript">
+setInterval(myTimer, 1000)
+</script>
+</body>
+</html>

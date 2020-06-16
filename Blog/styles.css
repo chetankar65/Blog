@@ -1,0 +1,17 @@
+body #main{
+	margin-bottom: 5%;
+	margin-left: 5%;
+	margin-right: 5%;
+	background-color: lightgrey;
+}
+
+#main div{
+	margin-left: 30%;
+}
+#main img{
+	margin-left:5%; 
+}
+body {
+	background-color: maroon;
+}
+
