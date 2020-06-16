@@ -1,2 +1,4 @@
-# Blog
-Blog app 
+# Blog app
+
+- Post stories
+- View counter
